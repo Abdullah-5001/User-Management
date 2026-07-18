@@ -32,7 +32,7 @@ export const POST = async (request: Request) => {
   }
 };
 
-export const getUsers = async () => {
+export const GET = async () => {
   const data = await prisma.user.findMany();
   return NextResponse.json(
     { response: data, message: "All Users has been fetched Successfully" },
