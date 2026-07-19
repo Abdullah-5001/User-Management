@@ -16,6 +16,12 @@ model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
-  age       Int
+  password  String   
+  age       Int?
+  emailVerified DateTime?
+  image     String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  accounts  Account[]
+  sessions  Session[]
 }
