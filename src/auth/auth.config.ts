@@ -1,3 +1,5 @@
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
@@ -10,8 +12,30 @@ export default {
       },
 
       async authorize(credentials) {
-        return null;
+        if (!credentials.email || !credentials.password) return null;
+        const user = await prisma.user.findUnique({
+          where: {
+            email: credentials.email as string,
+          },
+        });
+        if (!user) return null;
+        const isPasswordCorrect = await bcrypt.compare(
+          credentials.password as string,
+          user.password,
+        );
+        if (!isPasswordCorrect) {
+          return null;
+        }
+        return {
+          id: String(user.id),
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        };
       },
     }),
   ],
+  pages: {
+    signIn: "/login",
+  },
 } satisfies NextAuthConfig;
